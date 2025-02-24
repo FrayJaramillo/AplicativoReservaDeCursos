@@ -1,0 +1,78 @@
+services:
+  # Servicio de API en PHP (Laravel)
+  courses_api_php:
+    build: ./courses_api_php
+    container_name: courses_api_php
+    restart: unless-stopped
+    working_dir: /var/www/html
+    ports:
+      - "8080:80"
+    env_file: .env # 🔹 Usa las variables del archivo .env
+    depends_on:
+      db_service_mysql:
+        condition: service_healthy # 🔹 Espera a que MySQL esté listo
+    volumes:
+      - ./courses_api_php/src:/var/www/html
+    networks:
+      - university_network # Servicio de FastAPI (Python)
+    # Servicio de FastAPI (Python)
+  reservations_api_python:
+    build: ./reservations_api_python
+    container_name: reservations_api_python
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - "8001:8001"
+    depends_on:
+      db_service_mysql:
+        condition: service_healthy # 🔹 Espera a que MySQL esté listo
+    volumes:
+      - ./reservations_api_python/src:/app
+    networks:
+      - university_network
+    #environment:
+    #  - DATABASE_URL=mysql+pymysql://root:root@db_service_mysql/university_db
+
+    # Servicio de Base de Datos (MySQL)
+
+    
+  # Servicio de Frontend (React)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend_react
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    networks:
+      - university_network
+
+  db_service_mysql:
+    image: mysql:8
+    container_name: db_service_mysql
+    restart: unless-stopped
+    env_file: .env # 🔹 Usa credenciales desde `.env`
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db_service_mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql # 🔹 Asegura persistencia de datos
+    networks:
+      - university_network
+    healthcheck:
+      # 🔹 Verifica si MySQL está listo antes de conectar otros servicios
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    # Servicio de Frontend (React)
+  
+networks:
+  university_network:
+    driver: bridge
+
+volumes:
+  db_data:
+    # 🔹 Volumen persistente para MySQL
+

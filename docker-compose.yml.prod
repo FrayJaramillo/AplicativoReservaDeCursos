@@ -1,0 +1,65 @@
+services:
+  # Servicio de API en PHP (Laravel)
+  courses_api_php:
+    build:
+      context: ./courses_api_php
+      dockerfile: Dockerfile
+    container_name: courses_api_php
+    restart: unless-stopped
+    working_dir: /var/www/html
+    ports:
+      - "8080:80" # Mapea el puerto 80 del contenedor al puerto 8080 del host
+    env_file: .env # Archivo de variables de entorno
+    depends_on:
+      db_service_mysql:
+        condition: service_healthy # Espera a que el servicio de base de datos esté saludable
+    networks:
+      - university_network # Red compartida entre los servicios
+
+  # Servicio de FastAPI (Python)
+  reservations_api_python:
+    build:
+      context: ./reservations_api_python
+      dockerfile: Dockerfile
+    container_name: reservations_api_python
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - "8001:8001" # Mapea el puerto 8001 del contenedor al puerto 8001 del host
+    depends_on:
+      db_service_mysql:
+        condition: service_healthy # Espera a que el servicio de base de datos esté saludable
+    networks:
+      - university_network # Red compartida entre los servicios
+
+  # Servicio de Frontend (React)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend_react
+    restart: unless-stopped
+    ports:
+      - "3000:80" # Mapea el puerto 80 del contenedor al puerto 3000 del host
+    networks:
+      - university_network # Red compartida entre los servicios
+
+  # Servicio de Base de Datos (MySQL)
+  db_service_mysql:
+    image: mysql:8
+    container_name: db_service_mysql
+    restart: unless-stopped
+    env_file: .env # Archivo de variables de entorno
+    ports:
+      - "3306:3306" # Mapea el puerto 3306 del contenedor al puerto 3306 del host
+    networks:
+      - university_network # Red compartida entre los servicios
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ] # Comando para verificar la salud del servicio
+      interval: 10s # Intervalo entre verificaciones
+      retries: 5 # Número de reintentos antes de marcar como no saludable
+      timeout: 5s # Tiempo de espera para cada verificación
+
+networks:
+  university_network:
+    driver: bridge # Tipo de red
