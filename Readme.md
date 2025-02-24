@@ -34,9 +34,9 @@ Para levantar el proyecto, asegúrese de tener instalado **Docker y docker-compo
 2. Cree un archivo `.env` en la raíz del proyecto y configure las variables de entorno necesarias.
    ```properties
    MYSQL_DATABASE=university_db
-   MYSQL_USER=admin
-   MYSQL_PASSWORD=admin123
-   MYSQL_ROOT_PASSWORD=root123
+   MYSQL_USER=
+   MYSQL_PASSWORD=
+   MYSQL_ROOT_PASSWORD=
    ```
 
 3. En `reservations_api_python/src/database.py` también deberá fijar estas variables.
