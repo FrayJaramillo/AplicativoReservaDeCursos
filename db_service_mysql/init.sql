@@ -37,3 +37,15 @@ CREATE TABLE reservations (
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
     FOREIGN KEY (schedule_id) REFERENCES schedules(id) ON DELETE CASCADE
 );
+
+
+USE university_db;
+
+-- Insertar 3 usuarios de prueba en la tabla students
+INSERT INTO students (full_name, email, password) VALUES
+('Fray Smith Jaramillo', 'fray.jaramillo@gmail.com', 'fray123'),
+('Camilo Sanchez', 'camilo.sanchez@gmail.com', 'camilo123'),
+('Santiago Cadavid Murcia', 'santiago.cadavid@gmail.com', 'santiago123'),
+('Daniela Sanchez', 'daniela.sanchez@gmail.com', 'daniela123'
+
+);
