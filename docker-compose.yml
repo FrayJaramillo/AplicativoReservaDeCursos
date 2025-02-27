@@ -37,7 +37,18 @@ services:
 
     # Servicio de Base de Datos (MySQL)
 
-    
+      # Servicio de Frontend (React)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend_react
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    networks:
+      - university_network
+
 
 
   db_service_mysql:
