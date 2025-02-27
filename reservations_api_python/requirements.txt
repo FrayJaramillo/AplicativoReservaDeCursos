@@ -22,3 +22,9 @@ mysql-connector-python
 
 # para manejar la conexion con la base de datos con sqlalchemy
 cryptography
+
+#para realizar pruebas Unitarias
+pytest
+
+#para realizar pruebas de integracion
+httpx

@@ -46,13 +46,13 @@ CREATE TABLE reservations (
 INSERT INTO students (full_name, email, password) VALUES
 ('Fray Smith Jaramillo', 'fray.jaramillo@gmail.com', 'fray123'),
 ('Camilo Sanchez', 'camilo.sanchez@gmail.com', 'camilo123'),
-('Santiago Cadavid Murcia', 'santiago.cadavid@gmail.com', 'santiago123'),
+('Santiago Cadavid', 'santiago.cadavid@gmail.com', 'santiago123'),
 ('Daniela Sanchez', 'daniela.sanchez@gmail.com', 'daniela123');
 
 -- Insertar más cursos de prueba en la tabla courses
 INSERT INTO courses (course_name, course_description) VALUES
 ('Algebra Lineal', 'Conceptos y aplicaciones del algebra lineal'),
-('Bases de Datos', 'Introduccion al diseño y gestion de bases de datos'),
+('Bases de Datos', 'Introduccion a la creacion y gestion de bases de datos'),
 ('Redes de Computadoras', 'Principios de redes y protocolos de comunicacion'),
 ('Estructuras de Datos', 'Analisis y aplicacion de estructuras de datos en programacion'),
 ('Ingenieria de Software', 'Metodologias y herramientas para el desarrollo de software'),
