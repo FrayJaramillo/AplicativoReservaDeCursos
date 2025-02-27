@@ -34,6 +34,7 @@ class StudentScheduleController extends Controller
                 'weekday' => $reservation->schedule->weekday,
                 'start_time' => $reservation->schedule->start_time,
                 'end_time' => $reservation->schedule->end_time,
+                'teacher_name' => $reservation->schedule->teacher_name,
                 'course' => [
                     'course_id' => $reservation->schedule->course->id,
                     'course_name' => $reservation->schedule->course->course_name,

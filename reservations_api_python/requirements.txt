@@ -10,6 +10,7 @@ pydantic
 # SQL toolkit and Object-Relational Mapping (ORM) library
 sqlalchemy
 
+
 # MySQL client library for Python
 pymysql
 

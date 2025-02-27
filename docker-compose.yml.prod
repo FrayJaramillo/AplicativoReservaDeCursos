@@ -3,7 +3,7 @@ services:
   courses_api_php:
     build:
       context: ./courses_api_php
-      dockerfile: Dockerfile
+     # dockerfile: Dockerfile
     container_name: courses_api_php
     restart: unless-stopped
     working_dir: /var/www/html

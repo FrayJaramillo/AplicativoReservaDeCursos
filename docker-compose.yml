@@ -15,6 +15,7 @@ services:
       - ./courses_api_php/src:/var/www/html
     networks:
       - university_network # Servicio de FastAPI (Python)
+      
     # Servicio de FastAPI (Python)
   reservations_api_python:
     build: ./reservations_api_python
@@ -36,17 +37,7 @@ services:
     # Servicio de Base de Datos (MySQL)
 
     
-  # Servicio de Frontend (React)
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: frontend_react
-    restart: unless-stopped
-    ports:
-      - "3000:80"
-    networks:
-      - university_network
+
 
   db_service_mysql:
     image: mysql:8

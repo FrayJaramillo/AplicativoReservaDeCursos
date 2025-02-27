@@ -7,7 +7,13 @@ import {
   Typography,
   Card,
   CardContent,
-  Chip,
+  Table, 
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow, 
+  Paper,
   Button,
   Dialog,
   DialogTitle,
@@ -15,6 +21,7 @@ import {
   DialogContentText,
   DialogActions,
 } from '@mui/material';
+
 import TopBar from '../components/TopBar';
 import SideDrawer from '../components/SideDrawer';
 import { registerForClass } from '../utils/RegisterClass';
@@ -40,32 +47,39 @@ const CourseList = () => {
   // Get the user name from local storage
   const userName = localStorage.getItem('userName');
 
-  // Fetch the list of classes when the component mounts
+   // Carga la lista de las clases, solo si tienen asignado un horario
+  const fetchAndSetClasses = async () => {
+    setLoadingClasses(true);
+    try {
+      const data = await fetchClasses();
+      setClasses(data.filter(course => course.schedules.length > 0));
+    } catch (error) {
+      console.error('Error al obtener las clases:', error);
+    } finally {
+      setLoadingClasses(false);
+    }
+  };
+  // llama a la función fetchAndSetClasses
   useEffect(() => {
-    const fetchData = async () => {
-      setLoadingClasses(true);
-      try {
-        const data = await fetchClasses();
-        setClasses(data);
-      } catch (error) {
-        console.error('Error al obtener las clases:', error);
-      } finally {
-        setLoadingClasses(false);
-      }
-    };
-
-    fetchData();
+    fetchAndSetClasses();
   }, []);
+
+
+
+
 
   // Handle the registration for a class
   const handleRegister = async (scheduleId) => {
     setLoadingRegister(true);
-    console.log('Registrando reserva con scheduleId:', scheduleId);
     const result = await registerForClass(scheduleId);
     setLoadingRegister(false);
     setDialogMessage(result.message);
     setDialogSeverity(result.success ? 'success' : 'error');
     setDialogOpen(true);
+
+    if (result.success) {
+      fetchAndSetClasses(); 
+    }
   };
 
   // Handle the closing of the dialog
@@ -85,7 +99,7 @@ const CourseList = () => {
         <Toolbar />
         <Container>
           <Typography variant="h4" gutterBottom>
-            Listado de Clases
+            Listado de Clases Disponibles
           </Typography>
 
           {/* Overlay de carga de clases */}
@@ -94,32 +108,46 @@ const CourseList = () => {
           {!loadingClasses && classes.map((course) => (
             <Card key={course.id} sx={{ mb: 3 }}>
               <CardContent>
-                <Typography variant="h5">{course.course_name}</Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1, color: 'primary.main' }}>
+                  {course.course_name}
+                </Typography>                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                   {course.course_description}
                 </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  Capacidad máxima: {course.max_capacity}
-                </Typography>
                 <Box sx={{ mt: 2 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                    Horarios:
-                  </Typography>
-                  {course.schedules.map((schedule) => (
-                    <Box key={schedule.id} sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                      <Chip
-                        label={`${schedule.weekday}: ${schedule.start_time} - ${schedule.end_time}`}
-                        sx={{ mr: 1 }}
-                      />
-                      <Button
-                        variant="contained"
-                        size="small"
-                        onClick={() => handleRegister(schedule.id)}
-                      >
-                        Registrarme
-                      </Button>
-                    </Box>
-                  ))}
+                  <TableContainer component={Paper}>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell><strong>Día</strong></TableCell>
+                          <TableCell><strong>Horario</strong></TableCell>
+                          <TableCell><strong>Docente</strong></TableCell>
+                          <TableCell><strong>Cupos</strong></TableCell>
+                          <TableCell align="center"><strong>Acción</strong></TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {course.schedules.map((schedule) => (
+                          <TableRow key={schedule.id}>
+                            <TableCell>{schedule.weekday}</TableCell>
+                            <TableCell>{schedule.start_time} - {schedule.end_time}</TableCell>
+                            <TableCell>{schedule.teacher_name}</TableCell>
+                            <TableCell>
+                              {schedule.max_capacity - schedule.reservations_count} / {schedule.max_capacity}
+                            </TableCell>
+                            <TableCell align="center">
+                              <Button
+                                variant="contained"
+                                size="small"
+                                onClick={() => handleRegister(schedule.id)}
+                              >
+                                Registrarme
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </Box>
               </CardContent>
             </Card>

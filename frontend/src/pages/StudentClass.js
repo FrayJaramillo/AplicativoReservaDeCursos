@@ -27,11 +27,9 @@ const weekdays = [
 ];
 
 const StudentClass = () => {
-  const userId = localStorage.getItem('userId');
-
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true); // Se inicializa en true
-  const studentId = userId; // ID del estudiante (debe ser dinámico)
+  const studentId = localStorage.getItem('userId'); // ID del estudiante (debe ser dinámico)
 
   // Fetch the student's classes when the component mounts
   useEffect(() => {
@@ -48,7 +46,7 @@ const StudentClass = () => {
     };
 
     fetchData();
-  }, []);
+  }, [studentId]); // Incluye studentId en la lista de dependencias
 
   return (
     <Box sx={{ display: "flex", backgroundColor: "#f4f6f8", minHeight: "100vh" }}>

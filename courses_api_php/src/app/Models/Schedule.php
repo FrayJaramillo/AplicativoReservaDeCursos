@@ -17,7 +17,9 @@ class Schedule extends Model
         'course_id',
         'weekday',
         'start_time',
-        'end_time'
+        'end_time',
+        'teacher_name',
+        'max_capacity' // Nuevo campo agregado
     ];
 
     // Deshabilitar las marcas de tiempo (created_at y updated_at)
@@ -43,3 +45,4 @@ class Schedule extends Model
         return $this->hasMany(Reservation::class);
     }
 }
+ 

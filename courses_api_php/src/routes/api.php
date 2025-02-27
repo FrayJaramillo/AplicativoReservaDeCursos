@@ -11,8 +11,10 @@ use App\Http\Controllers\StudentScheduleController;
 Route::middleware('api.key')->group(function () {
     // Obtener todos los cursos
     Route::get('/courses', [CourseController::class, 'index']);
+    
     // Crear un nuevo curso
     Route::post('/courses', [CourseController::class, 'store']);
+    
     // Obtener los horarios de un estudiante
     Route::get('/student-schedules/{id}', [StudentScheduleController::class, 'getStudentSchedules']);
     // Crear una nueva reserva

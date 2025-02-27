@@ -1,16 +1,22 @@
-import mysql.connector
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-def get_db_connection():
-    """
-    Establece una conexión a la base de datos MySQL.
+# Configuración de la URL de la base de datos
+DATABASE_URL = "mysql+pymysql://admin:admin123@db_service_mysql/university_db"
+# Crear el motor de conexión
+engine = create_engine(DATABASE_URL, echo=True)
 
-    Returns:
-        mysql.connector.connection.MySQLConnection: Objeto de conexión a la base de datos.
-    """
-    return mysql.connector.connect(
-        host="db_service_mysql",  # Nombre del servicio de base de datos definido en docker-compose.yml
-        user="admin",             # Usuario de la base de datos
-        password="admin123",      # Contraseña del usuario de la base de datos
-        database="university_db", # Nombre de la base de datos
-        port="3306"               # Puerto de la base de datos
-    )
+# Crear la sesión
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Definir la base para los modelos
+Base = declarative_base()
+
+# Función para obtener la sesión de la base de datos
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+

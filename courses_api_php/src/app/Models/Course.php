@@ -15,8 +15,7 @@ class Course extends Model
     // Campos que se pueden asignar masivamente
     protected $fillable = [
         'course_name',
-        'course_description',
-        'max_capacity'
+        'course_description'
     ];
 
     // Deshabilitar las marcas de tiempo (created_at y updated_at)
