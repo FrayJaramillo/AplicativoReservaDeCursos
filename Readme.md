@@ -114,6 +114,8 @@ json
 ## Configuración de Docker Compose
 El archivo docker-compose.yml define los servicios y la red utilizada por el sistema. A continuación se describe la configuración de cada servicio y la red:
 
+![alt text](/Readme.images/Microservicios.png)
+
 ### Servicios
 - **courses_api_php:** Servicio de API en PHP (Laravel) para la gestión de cursos.
 - **reservations_api_python:** Servicio de API en Python (FastAPI) para el procesamiento de reservas.
