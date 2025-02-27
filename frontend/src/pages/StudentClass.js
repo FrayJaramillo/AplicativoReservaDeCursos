@@ -7,11 +7,13 @@ import {
   Card,
   CardContent,
   Paper,
+  Divider
 } from "@mui/material";
 import TopBar from "../components/TopBar";
 import SideDrawer from "../components/SideDrawer";
 import { fetchStudentClasses } from "../utils/ListStudentClass";
 import LoadingOverlay from "../components/LoadingOverlay";
+
 
 const drawerWidth = 240;
 
@@ -19,10 +21,10 @@ const drawerWidth = 240;
 const weekdays = [
   "Lunes",
   "Martes",
-  "Miércoles",
+  "Miercoles",
   "Jueves",
   "Viernes",
-  "Sábado",
+  "Sabado",
   "Domingo",
 ];
 
@@ -57,9 +59,9 @@ const StudentClass = () => {
         <Typography variant="h4" gutterBottom>
           Mis Clases
         </Typography>
-        
+
         <LoadingOverlay loading={loading} message="Cargando tus clases..." />
-        
+
         {!loading && (
           <Box
             sx={{
@@ -83,6 +85,7 @@ const StudentClass = () => {
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                   {day}
                 </Typography>
+                <Divider/>
                 {classes
                   .filter((s) => s.weekday === day)
                   .sort((a, b) => a.start_time.localeCompare(b.start_time))
@@ -91,17 +94,17 @@ const StudentClass = () => {
                       key={s.schedule_id}
                       sx={{
                         mt: 1,
-                        backgroundColor: "#ffffff",
+                        backgroundColor: "#fffff",
                         boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
                         "&:hover": { transform: "scale(1.02)", transition: "0.3s" },
                       }}
                     >
                       <CardContent>
-                        <Typography
-                          variant="subtitle1"
-                          sx={{ fontWeight: "bold"}}
-                        >
+                        <Typography variant="subtitle1" sx={{ fontWeight: "bold", color: 'primary.main' }}>
                           {s.course.course_name}
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: "bold", color: "#555" }}>
+                          {s.teacher_name}
                         </Typography>
                         <Typography variant="body2" sx={{ color: "#555" }}>
                           {s.start_time} - {s.end_time}

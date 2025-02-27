@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from database import get_db  # Importa la sesión de la base de datos
 from models import Reservation, Student, Schedule
 from schemas import ReservationRequest
+import logging
 
 router = APIRouter()
 def verificar_reserva_existente(db: Session, student_id: int, schedule_id: int):
@@ -11,6 +12,7 @@ def verificar_reserva_existente(db: Session, student_id: int, schedule_id: int):
     """
     # Obtener el course_id del horario solicitado
     course_id = db.query(Schedule.course_id).filter(Schedule.id == schedule_id).scalar()
+    print(f"🔍 Obteniendo course_id del schedule_id={schedule_id}: {course_id}")
 
     if not course_id:
         raise HTTPException(status_code=404, detail="El horario no existe")
@@ -18,6 +20,11 @@ def verificar_reserva_existente(db: Session, student_id: int, schedule_id: int):
     # Obtener todos los schedules asociados a ese curso
     schedule_ids_query = db.query(Schedule.id).filter(Schedule.course_id == course_id)
     schedule_ids = [s[0] for s in schedule_ids_query.all()]
+    print(f"📋 Todos los schedule_ids del curso {course_id}: {schedule_ids}")
+
+    if not schedule_ids:
+        print("⚠️ No hay horarios asociados a este curso.")
+        return
 
     # Verificar si el estudiante ya tiene una reserva en alguno de esos schedules
     existing_reservation = db.query(Reservation).filter(
@@ -25,14 +32,22 @@ def verificar_reserva_existente(db: Session, student_id: int, schedule_id: int):
         Reservation.schedule_id.in_(schedule_ids)  # Buscar en los horarios del mismo curso
     ).first()
 
+    print(f"🧐 Buscando reservas del estudiante {student_id} en schedule_ids {schedule_ids}")
+    print(f"🔎 Reserva encontrada: {existing_reservation}")
+
     if existing_reservation:
         raise HTTPException(status_code=400, detail="El estudiante ya está registrado en otro horario de este curso")
+
+
 
 @router.post("/reservas")
 def create_reservation(reservation: ReservationRequest, db: Session = Depends(get_db)):
     """
     Crea una nueva reserva para un estudiante en un horario específico.
     """
+    print("Obteniendo course_id del schedule...", flush=True)
+
+
     # 4️ Verificar si el estudiante ya está registrado en otro horario del mismo curso
     verificar_reserva_existente(db, reservation.student_id, reservation.schedule_id)
 
@@ -55,9 +70,6 @@ def create_reservation(reservation: ReservationRequest, db: Session = Depends(ge
 
     if existing_reservation:
         raise HTTPException(status_code=400, detail="El estudiante ya tiene reservada este horario")
-    
-    #4️ Verificar si el estudiante ya está registrado en otro horario del mismo curso
-    verificar_reserva_existente(db, reservation.student_id, reservation.schedule_id)
 
     # 5️ Verificar si el estudiante tiene otro curso en el mismo día con solapamiento de horario
     overlapping_reservations = db.query(Schedule).join(Reservation).filter(

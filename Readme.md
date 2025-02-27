@@ -16,7 +16,7 @@ El sistema se compone de los siguientes microservicios:
 
 ## Decisiones de Diseño
 - **Microservicios:** Se optó por una arquitectura basada en microservicios para mejorar la escalabilidad y modularidad del sistema.
-- **FastAPI para Procesamiento de Reservas:** Debido a su alto rendimiento y capacidad para manejar concurrencia de manera eficiente.
+- **FastAPI y MysqlAclhemy para Procesamiento de Reservas:** Debido a su alto rendimiento y capacidad para manejar concurrencia de manera eficiente.
 - **Laravel para Gestión de Cursos y Reservas:** Laravel proporciona una estructura robusta para manejar autenticación y lógica de negocio.
 - **Docker y docker-compose:** Facilita el despliegue y la configuración de los servicios en cualquier entorno.
 
@@ -26,8 +26,8 @@ Para levantar el proyecto, asegúrese de tener instalado Docker y docker-compose
 1. Clone el repositorio:
    
 sh
-   git clone <URL_DEL_REPOSITORIO>
-   cd <NOMBRE_DEL_REPOSITORIO>
+   git clone <https://github.com/FrayJaramillo/AplicativoReservaDeCursos>
+   cd <Agendar_Clases>
 
 
 2. Cree un archivo .env en la raíz del proyecto y configure las variables de entorno necesarias.
@@ -43,24 +43,27 @@ sh
 ## Endpoints de las APIs
 
 ### API de Cursos (Laravel)
-- **POST** http://localhost:8080/api/courses → Registra los cursos junto con su respectivo horario.
+- **POST** http://localhost:8080/api/courses → Registra los horarios, profesores y cupo, asosiandolos a un curso previamente creado
   #### Ejemplo de solicitud:
   
 json
   {
-    "course_name": "Matemáticas Avanzadas",
-    "course_description": "Curso avanzado de matemáticas",
-    "max_capacity": 30,
+    "course_id" 1
     "schedules": [
       {
         "weekday": "Lunes",
         "start_time": "08:00",
-        "end_time": "10:00"
+        "end_time": "10:00",
+        "teacher_name: "Alfonso",
+        "max_capacity: 20
+
       },
       {
         "weekday": "Miercoles",
         "start_time": "08:00",
         "end_time": "10:00"
+        "teacher_name: "Juan",
+        "max_capacity: 25
       }
     ]
   }
@@ -105,7 +108,7 @@ json
 - **GET** http://localhost:8080/api/student-schedules/{idstudent} → Devuelve el listado de horarios y cursos en los que está registrado el estudiante.
 
 ## Tecnologías Utilizadas
-- **Backend:** Laravel (PHP), FastAPI (Python)
+- **Backend:** Laravel (PHP), FastAPI (Python), Sqlalchemy (ORM python)
 - **Base de Datos:** MySQL
 - **Frontend:** React
 - **Servidor Web:** Nginx

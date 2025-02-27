@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Enum as SqlEnum, Time, TIMESTAMP, Text
+from sqlalchemy import (
+    Column, Integer, String, ForeignKey, Enum as SqlEnum, Time, TIMESTAMP, Text, CheckConstraint
+)
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship, declarative_base
 
@@ -13,7 +15,7 @@ WeekdayEnum = SqlEnum(
 class Student(Base):
     __tablename__ = "students"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     full_name = Column(String(100), nullable=False)
     email = Column(String(100), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
@@ -24,8 +26,8 @@ class Student(Base):
 class Course(Base):
     __tablename__ = "courses"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    course_name = Column(String(100), nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    course_name = Column(String(100), nullable=False, unique=True)  # Opcional: evitar duplicados
     course_description = Column(Text, nullable=True)
     created_at = Column(TIMESTAMP, server_default=func.current_timestamp())
 
@@ -35,7 +37,7 @@ class Course(Base):
 class Schedule(Base):
     __tablename__ = "schedules"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
     weekday = Column(WeekdayEnum, nullable=False)
     start_time = Column(Time, nullable=False)
@@ -46,11 +48,13 @@ class Schedule(Base):
     course = relationship("Course", back_populates="schedules")
     reservations = relationship("Reservation", back_populates="schedule", cascade="all, delete")
 
+    __table_args__ = (CheckConstraint("max_capacity >= 0", name="check_max_capacity_positive"),)
+
 # Modelo de Reservations
 class Reservation(Base):
     __tablename__ = "reservations"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
     schedule_id = Column(Integer, ForeignKey("schedules.id", ondelete="CASCADE"), nullable=False)
     created_at = Column(TIMESTAMP, server_default=func.current_timestamp())
